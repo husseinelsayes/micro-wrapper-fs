@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   //permissionSysURL : 'http://172.16.101.40:8089/api',
   modulesSysURL : '/systems/api',
-  redirectUrl : 'http://my.sfd.gov.sa/#/mysfd/dashboard/v1',
+  redirectUrl : 'http://my.sfd.gov.sa/index.html',
   authServerUrl : 'https://sso2.sfd.gov.sa',
   revokeEndpoint : '/sso/oauth/revoke',
   ssoClientId : 'micro_wrapper'
