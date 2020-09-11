@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ModulesService } from 'src/app/services/modules.service';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { Utils } from 'src/app/services/utils';
 
 @Component({
   selector: 'app-header-sidebar-large',
@@ -9,10 +10,13 @@ import { NavigationService } from 'src/app/services/navigation.service';
   styleUrls: ['./header-sidebar-large.component.scss']
 })
 export class HeaderSidebarLargeComponent implements OnInit {
-
+    @Output() headerToggleEv = new EventEmitter<any>();
     notifications: any[];
     modules : any[];
+    currentState;
+
     constructor(private navService: NavigationService,private auth: AuthenticationService,private moduleService:ModulesService) {
+      this.currentState = this.navService.sidebarState;
       this.notifications = [
         {
           icon: 'i-Speach-Bubble-6',
@@ -61,6 +65,7 @@ export class HeaderSidebarLargeComponent implements OnInit {
     }
   
     ngOnInit() {
+      this.updateSidebar();
       this.moduleService.getSystems().subscribe((response:any)=>{
         this.modules = response;
       },error=>{
@@ -68,24 +73,46 @@ export class HeaderSidebarLargeComponent implements OnInit {
       })
     }
   
+    toggleEmitHeaderState(){
+      
+      this.toggelSidebar();
+      
+    }
+
     toggelSidebar() {
-      const state = this.navService.sidebarState;
+      console.log('toggle header hamburger')
+      var state = this.navService.sidebarState;
       if (state.childnavOpen && state.sidenavOpen) {
-        return state.childnavOpen = false;
+        state.childnavOpen = false;
+        this.headerToggleEv.emit(state);
+      console.log(state);
+        return; 
       }
       if (!state.childnavOpen && state.sidenavOpen) {
-        return state.sidenavOpen = false;
+         state.sidenavOpen = false;
+         this.headerToggleEv.emit(state);
+      console.log(state);
+         return
       }
       if (!state.sidenavOpen && !state.childnavOpen) {
           state.sidenavOpen = true;
-          setTimeout(() => {
-              state.childnavOpen = true;
-          }, 50);
+          state.childnavOpen = true;
       }
+      this.headerToggleEv.emit(state);
+      console.log(state);
     }
   
     signout() {
       this.auth.logout();
+    }
+
+    updateSidebar() {
+      if (Utils.isMobile()) {
+        this.navService.sidebarState.sidenavOpen = false;
+        this.navService.sidebarState.childnavOpen = false;
+      } else {
+        this.navService.sidebarState.sidenavOpen = true;
+      }
     }
 
 }

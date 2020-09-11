@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output, ElementRef, Renderer2 } from '@angular/core';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { authConfig } from './services/sso.config';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Subscription } from 'rxjs';
 import { LoaderService } from './services/loader.service';
 import { LoaderState } from './model/LoaderState';
+import { NavigationService } from './services/navigation.service';
 
 
 @Component({
@@ -16,9 +17,11 @@ export class AppComponent {
   show = false;
   private subscription: Subscription;
   showSpinner = false;
+  navState;
+  @Output() childMessage = new EventEmitter();
 
-  constructor(private _oauthService : OAuthService,private loaderService: LoaderService){
-    this.configureSSo();
+  constructor(private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
+    //this.configureSSo();
   }
 
   configureSSo(){
@@ -61,14 +64,15 @@ export class AppComponent {
   };
 
   ngOnInit() {
+    this.navState = this.navService.sidebarState;
     this.subscription = this.loaderService.loaderState
     .subscribe((state: LoaderState) => {
       this.show = state.show;
     });
-      this.load('business-trip-app');
-      this.load('dailyleave-app');
-      this.load('leave-app');
-      this.load('mysfd-app');
+      // this.load('business-trip-app');
+      // this.load('dailyleave-app');
+      // this.load('leave-app');
+      // this.load('mysfd-app');
       this.load('contacts-app');
   }
 
@@ -80,12 +84,36 @@ export class AppComponent {
     script.src = configItem.path;
     content.appendChild(script);
     const element: HTMLElement = document.createElement(configItem.element);
+    element.setAttribute('state', JSON.stringify(this.navState));
     content.appendChild(element);
+  }
+
+  propagateNavState(state){
+    let nativeElement =  <Element>this.hostElement.nativeElement;
+    let ff = nativeElement.querySelector("contacts-app");
+    this.renderer.setAttribute(ff,'state',JSON.stringify(state));
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
-  
 
+  getHeaderState(state){
+    this.propagateNavState(state);
+  }
+  
+  toggelSidebar() {
+    if (this.navState.childnavOpen && this.navState.sidenavOpen) {
+      return this.navState.childnavOpen = false;
+    }
+    if (!this.navState.childnavOpen && this.navState.sidenavOpen) {
+      return this.navState.sidenavOpen = false;
+    }
+    if (!this.navState.sidenavOpen && !this.navState.childnavOpen) {
+      this.navState.sidenavOpen = true;
+        setTimeout(() => {
+          this.navState.childnavOpen = true;
+        }, 50);
+    }
+  }
 }

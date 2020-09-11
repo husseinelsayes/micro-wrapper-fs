@@ -260,7 +260,7 @@
     height: calc(100vh - #{$topbar-height-mobile});
   }
   .sidebar-left {
-    left: calc(-#{$sidebar-left-width-mobile} - #{$side-clearance});
+    right: calc(-#{$sidebar-left-width-mobile} - #{$side-clearance});
     .navigation-left {
       width: $sidebar-left-width-mobile;
       .nav-item {
@@ -276,10 +276,10 @@
     }
   }
   .sidebar-left-secondary {
-    left: calc(-#{$sidebar-left-secondary-width-mobile} - #{$side-clearance});
+    right: calc(-#{$sidebar-left-secondary-width-mobile} - #{$side-clearance});
     width: $sidebar-left-secondary-width-mobile;
     &.open {
-      left: $sidebar-left-width-mobile;
+      right: $sidebar-left-width-mobile;
     }
   }
   .sidebar-overlay {

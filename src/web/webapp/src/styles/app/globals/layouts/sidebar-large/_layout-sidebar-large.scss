@@ -6,7 +6,7 @@
 }
 .main-content-wrap {
     width: 100%;
-    float: right;
+    float: left;
     margin-top: $topbar-height;
     transition: all .24s ease-in-out;
     padding: 2rem  2rem 0;
@@ -21,6 +21,7 @@
 //SIDEBAR =======
 
 .layout-sidebar-large {
+    direction: rtl !important;
     .sidebar-left-secondary,
     .sidebar-left {
         position: fixed;
@@ -31,11 +32,11 @@
     }
 
     .sidebar-left {
-        left: calc(-#{$sidebar-left-width} - #{$side-clearance});
+        right: calc(-#{$sidebar-left-width} - #{$side-clearance});
         z-index: 90;
         transition: all .24s ease-in-out;
         &.open {
-            left: 0
+            right: 0
         }
         .logo {
             display: none;
@@ -101,14 +102,14 @@
 
     // SIDENAV SECONDARY
     .sidebar-left-secondary {
-        left: calc(-#{$sidebar-left-secondary-width} - #{$side-clearance});
+        right: calc(-#{$sidebar-left-secondary-width} - #{$side-clearance});
         z-index: 89;
         width: $sidebar-left-secondary-width;
         padding: .75rem 0;
         transition: all .24s ease-in-out;
         background: $background;
         &.open {
-            left: $sidebar-left-width;
+            right: $sidebar-left-width;
         }
         header {
             display: none;
@@ -241,7 +242,7 @@
         height: calc(100vh - #{$topbar-height-mobile});
     }
     .sidebar-left {
-        left: calc(-#{$sidebar-left-width-mobile} - #{$side-clearance});
+        right: calc(-#{$sidebar-left-width-mobile} - #{$side-clearance});
         .navigation-left {
             width: $sidebar-left-width-mobile;
             .nav-item {
@@ -257,10 +258,10 @@
         }
     }
     .sidebar-left-secondary {
-        left: calc(-#{$sidebar-left-secondary-width-mobile} - #{$side-clearance});
+        right: calc(-#{$sidebar-left-secondary-width-mobile} - #{$side-clearance});
         width: $sidebar-left-secondary-width-mobile;
         &.open {
-            left: $sidebar-left-width-mobile;
+            right: $sidebar-left-width-mobile;
         }
     }
     .sidebar-overlay {

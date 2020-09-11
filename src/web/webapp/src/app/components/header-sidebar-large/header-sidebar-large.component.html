@@ -1,9 +1,9 @@
-<div class="main-header">
+<div class="main-header" style="direction: rtl;">
     <div class="logo">
         <img src="/assets/images/brand/SFD_LOGOTYPE_H_RGB_DUAL_RIGHT.svg" style="width:125px;height:85px" alt="">
     </div>
 
-    <div class="menu-toggle" (click)="toggelSidebar()">
+    <div class="menu-toggle" style="margin:0px;" (click)="toggelSidebar()">
         <div></div>
         <div></div>
         <div></div>
@@ -11,9 +11,9 @@
 
     <div class="d-flex align-items-center">
         <!-- Mega menu -->
-        <div ngbDropdown class="mega-menu d-none d-md-block">
+        <div ngbDropdown class="mega-menu  d-md-block">
             <button ngbDropdownToggle href="#" class="btn text-muted dropdown-toggle mr-3">دليل الأنظمة</button>
-            <div ngbDropdownMenu perfectScrollbar>
+            <div ngbDropdownMenu perfectScrollbar style="right: 0;">
                 <div class="row m-0">
                     <div class="col-md-3 p-4 bg-img" dir="rtl" style="text-align: right">
                         <h3 class="title">دليل الأنظمة
@@ -53,10 +53,10 @@
 
     <div class="header-part-right">
         <i fullScreenWindow class="i-Full-Screen header-icon d-none d-sm-inline-block" role="button"></i>
-        <div ngbDropdown [placement]="'bottom-right'" class="d-none d-sm-inline-block">
+        <div ngbDropdown [placement]="'bottom-right'" class="d-sm-inline-block">
             <i ngbDropdownToggle class="i-Information text-muted header-icon" role="button"></i>
-            <div ngbDropdownMenu class="menu-icon-grid-dropdown">
-                <div class="menu-icon-grid">
+            <div ngbDropdownMenu class="notification-dropdown rtl-ps-none" style="right: -182px;left:0;">
+                <div class="menu-icon-grid" style="text-align: center;">
                     <a href="#/contacts/find"><i class="i-Men"></i> دليل الأشخاص</a>
                     <a href="#"><i class="i-Calendar-4"></i> تقويم العمل</a>
 
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div ngbDropdown [placement]="'bottom-right'">
+        <div ngbDropdown [placement]="'bottom-right'" class="d-none">
             <div class="badge-top-container">
                 <span class="badge badge-primary">0</span>
                 <i ngbDropdownToggle class="i-Bell text-muted header-icon" role="button"></i>
@@ -90,7 +90,7 @@
         <div ngbDropdown [placement]="'bottom-right'" class="user col align-self-end">
             <img src="/assets/images/faces/avatar.png" id="userDropdown" ngbDropdownToggle alt="">
 
-            <div ngbDropdownMenu aria-labelledby="userDropdown" class="header-account-dropdown" style="text-align: right">
+            <div ngbDropdownMenu aria-labelledby="userDropdown" class="header-account-dropdown" style="text-align: right;right: -79px;">
                 <div class="dropdown-header">
                     <i class="i-Lock-User mr-1"></i>بياناتي
                 </div>
