@@ -1,0 +1,42 @@
+/* You can add global styles to this file, and also import other style files */
+
+@font-face {
+    font-family: sfdCairo;
+    src:url('fonts/Cairo-Regular.ttf') format('truetype');
+}
+
+// @font-face {
+//     font-family: SamArab;
+//     src:url("assets/styles/fonts//SamArb.ttf") format('truetype');
+// }
+// @font-face {
+//     font-family: Luxury;
+//     src:url("assets/styles/fonts/Luxury.ttf") format('truetype');
+// }
+// @font-face {
+//     font-family: stc;
+//     src:url("assets/styles/fonts/stc.ttf") format('truetype');
+// }
+// @font-face {
+//     font-family: jaz-light;
+//     src:url("assets/styles/fonts/jaz-light.ttf") format('truetype');
+// }
+
+*{
+    font-family: sfdCairo,stc,SamArab, Tahoma, sfdCairo;
+}
+
+html, body{
+    background:#f3f2f1;
+    
+    font-size: 13px;
+    text-align: right !important;
+    margin: 0 auto;
+
+
+}
+
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

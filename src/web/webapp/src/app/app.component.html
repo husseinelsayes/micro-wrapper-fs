@@ -1,0 +1,16 @@
+<app-spinner></app-spinner>
+<div class="app-admin-wrap layout-sidebar-large"  [class.hidden]="show">
+  <div>
+      <app-header-sidebar-large></app-header-sidebar-large>
+  </div>
+  <div class="app-admin-wrap-content d-flex flex-column sidenav-open" [perfectScrollbar]="{suppressScrollX: true}" style="scroll-behavior: smooth;background-color: #fafafa">
+      <div id="content">
+      </div>
+      <div class="flex-grow-1"></div>
+      <app-footer></app-footer>
+  </div>
+</div>
+
+<!-- <div *ngIf="!authenticated" style="background-color: white;"></div> -->
+
+
