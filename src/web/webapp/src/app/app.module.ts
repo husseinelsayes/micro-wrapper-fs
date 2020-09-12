@@ -7,7 +7,7 @@ import { AuthGuard } from './services/auth-guard';
 import { OAuthService, OAuthModule } from 'angular-oauth2-oidc';
 import { HeaderSidebarLargeComponent } from './components/header-sidebar-large/header-sidebar-large.component';
 import { SharedDirectivesModule } from './directives/shared-directives.module';
-import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarModule, PerfectScrollbarConfigInterface, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { InterceptorService } from './services/interceptor.service';
 import { FooterComponent } from './components/footer/footer.component';
 import { NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -16,6 +16,12 @@ import { RelativeTimePipe } from './pipes/relative-time.pipe';
 import { ExcerptPipe } from './pipes/excerpt.pipe';
 import { GetValueByKeyPipe } from './pipes/get-value-by-key.pipe';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  swipeEasing : true,
+  suppressScrollX: true
+};
+
 @NgModule({
   declarations: [
     SpinnerComponent,
@@ -42,6 +48,10 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,
       multi: true
+    },
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
     }
   ],
   bootstrap: [AppComponent],

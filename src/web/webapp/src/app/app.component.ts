@@ -21,7 +21,7 @@ export class AppComponent {
   @Output() childMessage = new EventEmitter();
 
   constructor(private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
-    //this.configureSSo();
+    this.configureSSo();
   }
 
   configureSSo(){
@@ -69,10 +69,10 @@ export class AppComponent {
     .subscribe((state: LoaderState) => {
       this.show = state.show;
     });
-      // this.load('business-trip-app');
-      // this.load('dailyleave-app');
-      // this.load('leave-app');
-      // this.load('mysfd-app');
+      this.load('business-trip-app');
+      this.load('dailyleave-app');
+      this.load('leave-app');
+      this.load('mysfd-app');
       this.load('contacts-app');
   }
 
@@ -92,6 +92,15 @@ export class AppComponent {
     let nativeElement =  <Element>this.hostElement.nativeElement;
     let ff = nativeElement.querySelector("contacts-app");
     this.renderer.setAttribute(ff,'state',JSON.stringify(state));
+    let f2 = nativeElement.querySelector("mysfd-app");
+    this.renderer.setAttribute(f2,'state',JSON.stringify(state));
+    let f3 = nativeElement.querySelector("leave-app");
+    this.renderer.setAttribute(f3,'state',JSON.stringify(state));
+    let f4 = nativeElement.querySelector("dailyleave-app");
+    this.renderer.setAttribute(f4,'state',JSON.stringify(state));
+    let f5 = nativeElement.querySelector("business-trip-app");
+    this.renderer.setAttribute(f5,'state',JSON.stringify(state));
+
   }
 
   ngOnDestroy() {
