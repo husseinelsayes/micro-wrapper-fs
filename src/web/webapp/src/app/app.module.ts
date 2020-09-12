@@ -40,6 +40,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientModule,
     BrowserAnimationsModule,
     OAuthModule.forRoot(),
+    RouterModule.forRoot(
+      [
+        
+      ]
+    )
   ],
   providers: [
     OAuthService,

@@ -6,6 +6,12 @@ import { Subscription } from 'rxjs';
 import { LoaderService } from './services/loader.service';
 import { LoaderState } from './model/LoaderState';
 import { NavigationService } from './services/navigation.service';
+import { environment } from 'src/environments/environment';
+import { Router, NavigationEnd } from '@angular/router';
+
+import { filter } from 'rxjs/operators';
+import { lastIndexOf, indexOf } from 'core-js/fn/array';
+import { stringify } from 'querystring';
 
 
 @Component({
@@ -16,11 +22,11 @@ import { NavigationService } from './services/navigation.service';
 export class AppComponent {
   show = false;
   private subscription: Subscription;
-  showSpinner = false;
+  showSpinner;
   navState;
   @Output() childMessage = new EventEmitter();
 
-  constructor(private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
+  constructor(private router: Router,private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
     this.configureSSo();
   }
 
@@ -64,6 +70,21 @@ export class AppComponent {
   };
 
   ngOnInit() {
+    //window.addEventListener('hashchange', function() {
+    //alert("Hash Changed");
+    //});
+    /*this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)  
+    ).subscribe((event: NavigationEnd) => {
+      console.log(event);
+      let hashString = "/#/";
+      let truncatedString = event.url.substring(event.url.indexOf(hashString)+hashString.length,event.url.length);
+      if(event.url == '/'){
+        this.showSpinner = true;
+      }else{
+        this.showSpinner = false;
+      }
+    });*/
     this.navState = this.navService.sidebarState;
     this.subscription = this.loaderService.loaderState
     .subscribe((state: LoaderState) => {
@@ -90,16 +111,17 @@ export class AppComponent {
 
   propagateNavState(state){
     let nativeElement =  <Element>this.hostElement.nativeElement;
-    let ff = nativeElement.querySelector("contacts-app");
-    this.renderer.setAttribute(ff,'state',JSON.stringify(state));
-    let f2 = nativeElement.querySelector("mysfd-app");
-    this.renderer.setAttribute(f2,'state',JSON.stringify(state));
-    let f3 = nativeElement.querySelector("leave-app");
-    this.renderer.setAttribute(f3,'state',JSON.stringify(state));
-    let f4 = nativeElement.querySelector("dailyleave-app");
-    this.renderer.setAttribute(f4,'state',JSON.stringify(state));
-    let f5 = nativeElement.querySelector("business-trip-app");
-    this.renderer.setAttribute(f5,'state',JSON.stringify(state));
+    let contactsElement = nativeElement.querySelector("contacts-app");
+    this.renderer.setAttribute(contactsElement,'state',JSON.stringify(state));
+
+    let mysfdElement = nativeElement.querySelector("mysfd-app");
+    this.renderer.setAttribute(mysfdElement,'state',JSON.stringify(state));
+    let leaveElement = nativeElement.querySelector("leave-app");
+    this.renderer.setAttribute(leaveElement,'state',JSON.stringify(state));
+    let dailyleaveElement = nativeElement.querySelector("dailyleave-app");
+    this.renderer.setAttribute(dailyleaveElement,'state',JSON.stringify(state));
+    let businessTripElement = nativeElement.querySelector("business-trip-app");
+    this.renderer.setAttribute(businessTripElement,'state',JSON.stringify(state));
 
   }
 
