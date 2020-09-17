@@ -20,7 +20,7 @@ export class AppComponent {
   noRoute;
 
   constructor(private clientService: ClientService,private router: Router,private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
-    //this.configureSSo();
+    this.configureSSo();
   }
 
   configureSSo(){
