@@ -1,13 +1,12 @@
-import { Component, EventEmitter, Output, ElementRef, Renderer2 } from '@angular/core';
+import { Component,ElementRef,Renderer2 } from '@angular/core';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { authConfig } from './services/sso.config';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { Subscription } from 'rxjs';
 import { LoaderService } from './services/loader.service';
-import { LoaderState } from './model/LoaderState';
 import { NavigationService } from './services/navigation.service';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { ClientService } from './services/client.service';
+import { NotificationService} from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -18,9 +17,22 @@ export class AppComponent {
   showSpinner;
   navState;
   noRoute;
+  notifications;
+  constructor(private _notificationService : NotificationService,
+    private clientService: ClientService,private router: Router,private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
+      this._notificationService.getNotifications().subscribe(results => {
+        this.notifications = results;
+      })
+      //this.configureSSo();
+  }
 
-  constructor(private clientService: ClientService,private router: Router,private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
-    this.configureSSo();
+  closeAlert(id){
+    this._notificationService.dismiss(id);
+  }
+
+
+  getNofiticationCount(){
+    this._notificationService.addNotification('danger','my message for success');
   }
 
   configureSSo(){
@@ -63,6 +75,8 @@ export class AppComponent {
   };
 
   ngOnInit() {
+    
+    
     this.router.events.forEach((event) => {
       if(event instanceof NavigationStart) { // NavigationEnd// NavigationCancel// NavigationError// RoutesRecognized
         this.showSpinner = true;
@@ -164,18 +178,25 @@ export class AppComponent {
       messagePlaceholderElement.id = "message-placeholder";
       this.renderer.insertBefore(contentElement.parentElement,messagePlaceholderElement,contentElement);
     }
+    //append the message banner to message placeholder
+    this.renderer.appendChild(messagePlaceholderElement,this.divAlertElement(type,message));
+  }
 
-    //create a message banner element to append to message place holder
-    let messageBannerElement = <HTMLElement>document.createElement('div');
-    messageBannerElement.id = "message-banner";
-    this.renderer.addClass(messageBannerElement,"alert");
-    this.renderer.addClass(messageBannerElement,`alert-${type}`);
+  divAlertElement(type,message){
+    let messageAletElement = <HTMLElement>document.createElement('div');
+    this.renderer.addClass(messageAletElement,"alert");
+    this.renderer.addClass(messageAletElement,`alert-${type}`);
+    this.renderer.addClass(messageAletElement,"alert-dismissible");
     let spanElement : HTMLSpanElement = <HTMLDivElement>document.createElement('span');
     spanElement.innerHTML = `${message}`;
-    this.renderer.appendChild(messageBannerElement,spanElement);
-
-    //append the message banner to message placeholder
-    this.renderer.appendChild(messagePlaceholderElement,messageBannerElement);
+    let closeButtonEl = <HTMLButtonElement>document.createElement('button');
+    this.renderer.addClass(closeButtonEl,"close");
+    this.renderer.setAttribute(closeButtonEl,"type","button");
+    this.renderer.setAttribute(closeButtonEl,"data-dismiss","alert");
+    closeButtonEl.innerHTML = "&times;";
+    this.renderer.appendChild(messageAletElement,closeButtonEl);
+    this.renderer.appendChild(messageAletElement,spanElement);
+    return messageAletElement;
   }
   
   propagateNavState(state){

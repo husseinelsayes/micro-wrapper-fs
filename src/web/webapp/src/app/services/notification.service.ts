@@ -1,14 +1,34 @@
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  // this service will include a list of notifications to display
-  // getNotifications() will get an Observable that changes over time
-  // dismiss(notificationId) will dismiss a notification from the notification list
-  // add(message) appends a new notification object in the notifications list
+  notifications$ : Observable<Map<number,NotificationMessage>>;
+  private _notificationsSubject : Subject<Map<number,NotificationMessage>>;
+  private _notificationMap = new Map<number,NotificationMessage>();
 
-  //a ui-component will subscribe to the notification list to display reactively
-  constructor() { }
+  constructor() {
+    this._notificationsSubject = new Subject<Map<number,NotificationMessage>>();
+    this.notifications$ = this._notificationsSubject.asObservable();
+  }
+
+  getNotifications(){
+    return this.notifications$;
+  }
+
+  addNotification(type,message){
+    this._notificationMap.set(this._notificationMap.size+1,new NotificationMessage(type,message));
+    console.log(this._notificationMap);
+    this._notificationsSubject.next(this._notificationMap);
+  }
+
+  dismiss(id:number){
+    this._notificationMap.delete(id) ? this._notificationsSubject.next(this._notificationMap) : null
+  }
+}
+
+export class NotificationMessage{
+  constructor(public type : string, public message: string){}
 }

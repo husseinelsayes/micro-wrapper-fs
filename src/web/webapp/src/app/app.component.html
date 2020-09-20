@@ -1,20 +1,25 @@
 <!-- <button (click)="toggelSidebar()">BUTTON</button> -->
-<ngb-alert class="alert-card mb-4" type="success">
+<!-- <ngb-alert class="alert-card mb-4" type="success">
   <strong class="text-capitalize">Successfull</strong> yesss...
-</ngb-alert>
+</ngb-alert> -->
 
-<button (click)="displayMessage('success','My Success Message')">Display Message</button>
+<!-- <button (click)="displayMessage('success','My Success Message')">Display Message</button> -->
+<button style="position: absolute;top:0px;left:0px;z-index: 9999;" (click)="getNofiticationCount()">Display Message</button>
 
 <app-spinner *ngIf="showSpinner"></app-spinner>
 <div class="app-admin-wrap layout-sidebar-large">
   <div>
       <app-header-sidebar-large (headerToggleEv)="getHeaderState($event)"></app-header-sidebar-large>
+
   </div>
-  <div class="app-admin-wrap-content d-flex flex-column sidenav-open"  style="scroll-behavior: smooth;background-color: #fafafa">
-      <div id="content">
-      </div>
-      <div class="flex-grow-1"></div>
-      <app-footer></app-footer>
+  <div class="app-admin-wrap-content d-flex flex-column sidenav-open"  style="position:relative;top:80px;background-color: #fafafa">
+    <ngb-alert *ngFor="let notification of notifications | keyvalue" class="alert-card mx-4 my-2" [type]="notification.value.type" (close)="closeAlert(notification.key)">
+      <strong class="text-capitalize">{{notification?.value.message}}</strong>
+      <strong class="text-capitalize">{{notification?.value.type}}</strong>
+    </ngb-alert>
+    <div id="content"></div>
+    <div class="flex-grow-1"></div>
+    <app-footer></app-footer>
   </div>
 </div>
 
