@@ -6,13 +6,8 @@ import { Subscription } from 'rxjs';
 import { LoaderService } from './services/loader.service';
 import { LoaderState } from './model/LoaderState';
 import { NavigationService } from './services/navigation.service';
-import { environment } from 'src/environments/environment';
-import { Router, NavigationEnd } from '@angular/router';
-
-import { filter } from 'rxjs/operators';
-import { lastIndexOf, indexOf } from 'core-js/fn/array';
-import { stringify } from 'querystring';
-
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import { ClientService } from './services/client.service';
 
 @Component({
   selector: 'app-root',
@@ -20,13 +15,11 @@ import { stringify } from 'querystring';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  show = false;
-  private subscription: Subscription;
   showSpinner;
   navState;
-  @Output() childMessage = new EventEmitter();
+  noRoute;
 
-  constructor(private router: Router,private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
+  constructor(private clientService: ClientService,private router: Router,private renderer: Renderer2,private hostElement: ElementRef,private _oauthService : OAuthService,private loaderService: LoaderService, private navService : NavigationService){
     this.configureSSo();
   }
 
@@ -70,45 +63,121 @@ export class AppComponent {
   };
 
   ngOnInit() {
-    //window.addEventListener('hashchange', function() {
-    //alert("Hash Changed");
-    //});
-    /*this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)  
-    ).subscribe((event: NavigationEnd) => {
-      console.log(event);
-      let hashString = "/#/";
-      let truncatedString = event.url.substring(event.url.indexOf(hashString)+hashString.length,event.url.length);
-      if(event.url == '/'){
+    this.router.events.forEach((event) => {
+      if(event instanceof NavigationStart) { // NavigationEnd// NavigationCancel// NavigationError// RoutesRecognized
         this.showSpinner = true;
-      }else{
-        this.showSpinner = false;
+        console.log('navigation started!');
       }
-    });*/
-    this.navState = this.navService.sidebarState;
-    this.subscription = this.loaderService.loaderState
-    .subscribe((state: LoaderState) => {
-      this.show = state.show;
-    });
-      this.load('business-trip-app');
-      this.load('dailyleave-app');
-      this.load('leave-app');
-      this.load('mysfd-app');
-      this.load('contacts-app');
+      if(event instanceof NavigationEnd) { // NavigationEnd// NavigationCancel// NavigationError// RoutesRecognized
+        this.loadClientByRoute(event.url);
+        this.showSpinner = false;
+        console.log('navigation ended!');
+      }
+    })
   }
 
-  load(name: string): void {
+  loadClientByRoute(route : string){
+    //clear content
+    let contentElement = <HTMLElement>this.hostElement.nativeElement.querySelector("#content");
+    while(contentElement.firstChild){
+      this.renderer.removeChild(contentElement,contentElement.lastChild);
+    }
+    let client = this.routeHasClient(route,Object.keys(this.config));
+    
+    if(client != null){
+      this.noRoute = false;
+      this.loadClient(client);
+    }else{
+      this.noRoute = true;
+      console.log('client not found ');
+    }
+  }
+
+  
+  routeHasClient(route:string, clientNames : string[]){
+    let clientName= null;
+    clientNames.forEach(c=>{
+      if(route.startsWith(`/#/${c}/`)){
+        clientName = c;
+      }
+    })
+    return clientName;
+  }
+
+  createClientElement(name: string): HTMLElement {
     const configItem = this.config[name];
     if (configItem.loaded) return;
     const content = document.getElementById('content');
     const script = document.createElement('script');
+    script.id = `${name}-script`;
     script.src = configItem.path;
     content.appendChild(script);
     const element: HTMLElement = document.createElement(configItem.element);
-    element.setAttribute('state', JSON.stringify(this.navState));
     content.appendChild(element);
+    element.addEventListener('message', msg => this.handleMessage(msg));
+    element.setAttribute('state', 'init');
+    script.onerror = () => console.error(`error loading ${configItem.path}`);
+    return element;
   }
 
+  loadClient(name){
+    this.clientService.registerClient(this.createClientElement(name));
+  }
+
+  unloadClient(name){
+    let clientElement : HTMLElement = this.getClientElement(name);
+    let clientScript : HTMLElement = this.getClientScript(name);
+    this.clientService.unregisterClient(clientElement);
+    this.renderer.removeChild(clientElement.parentElement,clientElement);
+    this.renderer.removeChild(clientScript.parentElement,clientScript);
+  }
+
+  getClientElement(name:string){
+    let nativeElement =  <Element>this.hostElement.nativeElement;
+    return <HTMLElement>nativeElement.querySelector(name);
+  }
+
+  getClientScript(name:string){
+    return <HTMLElement>document.getElementById(`${name}-script`);
+  }
+
+  handleMessage(msg:any): void {
+    console.log('shell received message: ', msg.detail);
+    if(msg.detail.type =='state'){
+      if(msg.detail.payload =='initializing'){
+        this.showSpinner = true;
+      }else if(msg.detail.payload =='ready'){
+        this.showSpinner = false;
+      }
+    }else if(msg.detail.type =='error'){
+      this.showSpinner = false;
+      this.displayMessage('danger',msg.detail.payload);
+    }
+  }
+
+  displayMessage(type,message){
+    let contentElement:HTMLElement = <HTMLElement>document.getElementById('content');
+    //clear current placeholder then create a new one
+    let messagePlaceholderElement:HTMLElement = <HTMLElement>document.getElementById('message-placeholder');
+    if(!messagePlaceholderElement){
+      messagePlaceholderElement = <HTMLElement>document.createElement('div');
+      messagePlaceholderElement.id = "message-placeholder";
+      this.renderer.insertBefore(contentElement.parentElement,messagePlaceholderElement,contentElement);
+    }
+
+    //create a message banner element to append to message place holder
+    let messageBannerElement = <HTMLElement>document.createElement('div');
+    messageBannerElement.id = "message-banner";
+    this.renderer.addClass(messageBannerElement,"alert");
+    this.renderer.addClass(messageBannerElement,`alert-${type}`);
+    let spanElement : HTMLSpanElement = <HTMLDivElement>document.createElement('span');
+    spanElement.innerHTML = `${message}`;
+    this.renderer.appendChild(messageBannerElement,spanElement);
+
+    //append the message banner to message placeholder
+    this.renderer.appendChild(messagePlaceholderElement,messageBannerElement);
+  }
+  
   propagateNavState(state){
     let nativeElement =  <Element>this.hostElement.nativeElement;
     let contactsElement = nativeElement.querySelector("contacts-app");
@@ -123,10 +192,6 @@ export class AppComponent {
     let businessTripElement = nativeElement.querySelector("business-trip-app");
     this.renderer.setAttribute(businessTripElement,'state',JSON.stringify(state));
 
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   getHeaderState(state){

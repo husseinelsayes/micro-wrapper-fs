@@ -9,22 +9,10 @@ import { LoaderState } from '../../model/LoaderState';
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss']
 })
-export class SpinnerComponent implements OnInit, OnDestroy {
-  show = false;
+export class SpinnerComponent implements OnInit {
   
-  private subscription: Subscription;
-  
-  constructor(private loaderService: LoaderService) { }
-  
-  ngOnInit() {
-    this.subscription = this.loaderService.loaderState
-    .subscribe((state: LoaderState) => {
-      this.show = state.show;
-    });
+  ngOnInit(){
+    
   }
   
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
 }
