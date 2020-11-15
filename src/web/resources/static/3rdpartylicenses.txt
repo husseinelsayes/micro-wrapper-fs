@@ -1,3 +1,6 @@
+@angular-extensions/elements
+MIT
+
 @angular/animations
 MIT
 

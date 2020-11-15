@@ -4,20 +4,45 @@
 </ngb-alert> -->
 
 <!-- <button (click)="displayMessage('success','My Success Message')">Display Message</button> -->
-<button style="position: absolute;top:0px;left:0px;z-index: 9999;" (click)="getNofiticationCount()">Display Message</button>
+<!-- <button style="position: absolute;top:0px;left:0px;z-index: 9999;" (click)="addNofitication()">Add notification</button> -->
 
 <app-spinner *ngIf="showSpinner"></app-spinner>
 <div class="app-admin-wrap layout-sidebar-large">
   <div>
       <app-header-sidebar-large (headerToggleEv)="getHeaderState($event)"></app-header-sidebar-large>
-
   </div>
-  <div class="app-admin-wrap-content d-flex flex-column sidenav-open"  style="position:relative;top:80px;background-color: #fafafa">
-    <ngb-alert *ngFor="let notification of notifications | keyvalue" class="alert-card mx-4 my-2" [type]="notification.value.type" (close)="closeAlert(notification.key)">
-      <strong class="text-capitalize">{{notification?.value.message}}</strong>
-      <strong class="text-capitalize">{{notification?.value.type}}</strong>
+  <div class="main-content-wrap d-flex flex-column" [ngClass]="{'sidenav-open': navService.sidebarState.sidenavOpen}" style="background-color: #fafafa">
+    <ngb-alert *ngFor="let notification of notifications | keyvalue" class="alert-card mb-4" [type]="notification.value.type" (close)="closeAlert(notification.key)">
+      <strong class="text-capitalize">{{notification?.value.payload}}</strong>
     </ngb-alert>
-    <div id="content"></div>
+    <div id="content">
+      <!-- <ax-lazy-element *axLazyElementDynamic="wiredElement">
+      </ax-lazy-element> -->
+
+      <!-- <ng-container *ngFor="let c of dynamicConfigs">
+        <ax-lazy-element state="c?.state" (message)="handleMessage(msg)" *axLazyElementDynamic="c?.url"></ax-lazy-element>
+        <mysfd-app [state]="c.state" (message)="handleMessage($event)" *axLazyElement></mysfd-app>
+      </ng-container> -->
+      <!-- <mysfd-app [state]="c.state" (message)="handleMessage($event)" *axLazyElement></mysfd-app> -->
+      <div *ngIf="app=='mysfd'">
+        <mysfd-app [state]="state" (message)="handleMessage($event)" *axLazyElement></mysfd-app>
+      </div>
+      <div *ngIf="app=='leave'">
+        <leave-app [state]="state" (message)="handleMessage($event)" *axLazyElement></leave-app>
+      </div>
+      <div *ngIf="app=='dailyleave'">
+        <dailyleave-app [state]="state" (message)="handleMessage($event)" *axLazyElement></dailyleave-app>
+      </div>
+      <div *ngIf="app=='businessTrip'">
+        <business-trip-app [state]="state" (message)="handleMessage($event)" *axLazyElement></business-trip-app>
+      </div>
+      <div *ngIf="app=='contacts'">
+        <contacts-app [state]="state" (message)="handleMessage($event)" *axLazyElement></contacts-app>
+      </div>
+      <div *ngIf="app=='payScale'">
+        <pay-scale-app [state]="state" (message)="handleMessage($event)" *axLazyElement></pay-scale-app>
+      </div>
+    </div>
     <div class="flex-grow-1"></div>
     <app-footer></app-footer>
   </div>

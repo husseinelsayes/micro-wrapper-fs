@@ -16,10 +16,23 @@ import { RelativeTimePipe } from './pipes/relative-time.pipe';
 import { ExcerptPipe } from './pipes/excerpt.pipe';
 import { GetValueByKeyPipe } from './pipes/get-value-by-key.pipe';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { NotificationService } from './services/notification.service';
+import { LazyElementsModule, LazyElementModuleOptions } from '@angular-extensions/elements'; 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   swipeEasing : true,
   suppressScrollX: true
+};
+
+const options: LazyElementModuleOptions = {
+  elementConfigs: [
+    { tag: 'dailyleave-app', url: '/dailyleave/dailyleave-app/main.js' },
+    { tag: 'leave-app', url: '/leave/leave-app/main.js' },
+    { tag: 'mysfd-app', url: '/mysfd/mysfd-app/main.js' },
+    { tag: 'business-trip-app', url: '/businessTrip/business-trip-app/main.js' },
+    { tag: 'contacts-app', url: '/contacts/main.js' },
+    { tag: 'pay-scale-app', url: '/payScale/pay-scale-app/main.js' },
+  ]
 };
 
 @NgModule({
@@ -33,6 +46,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     GetValueByKeyPipe
   ],
   imports: [
+    LazyElementsModule.forRoot(options),
     NgbModule,
     SharedDirectivesModule,
     PerfectScrollbarModule,
@@ -48,6 +62,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   ],
   providers: [
     OAuthService,
+    NotificationService,
     AuthGuard,
     {
       provide: HTTP_INTERCEPTORS,

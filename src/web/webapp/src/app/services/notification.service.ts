@@ -19,8 +19,9 @@ export class NotificationService {
   }
 
   addNotification(type,message){
+    this._notificationMap.clear();
     this._notificationMap.set(this._notificationMap.size+1,new NotificationMessage(type,message));
-    console.log(this._notificationMap);
+    //console.log(this._notificationMap);
     this._notificationsSubject.next(this._notificationMap);
   }
 
@@ -30,5 +31,5 @@ export class NotificationService {
 }
 
 export class NotificationMessage{
-  constructor(public type : string, public message: string){}
+  constructor(public type : string, public payload: string){}
 }

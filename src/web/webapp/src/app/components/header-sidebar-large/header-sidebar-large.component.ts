@@ -69,7 +69,7 @@ export class HeaderSidebarLargeComponent implements OnInit {
       this.moduleService.getSystems().subscribe((response:any)=>{
         this.modules = response;
       },error=>{
-        console.log(error);
+        //console.log(error);
       })
     }
   
@@ -80,18 +80,18 @@ export class HeaderSidebarLargeComponent implements OnInit {
     }
 
     toggelSidebar() {
-      console.log('toggle header hamburger')
+      //console.log('toggle header hamburger')
       var state = this.navService.sidebarState;
       if (state.childnavOpen && state.sidenavOpen) {
         state.childnavOpen = false;
         this.headerToggleEv.emit(state);
-      console.log(state);
+      //console.log(state);
         return; 
       }
       if (!state.childnavOpen && state.sidenavOpen) {
          state.sidenavOpen = false;
          this.headerToggleEv.emit(state);
-      console.log(state);
+      //console.log(state);
          return
       }
       if (!state.sidenavOpen && !state.childnavOpen) {
@@ -99,7 +99,7 @@ export class HeaderSidebarLargeComponent implements OnInit {
           state.childnavOpen = true;
       }
       this.headerToggleEv.emit(state);
-      console.log(state);
+      //console.log(state);
     }
   
     signout() {
@@ -113,6 +113,7 @@ export class HeaderSidebarLargeComponent implements OnInit {
       } else {
         this.navService.sidebarState.sidenavOpen = true;
       }
+      this.headerToggleEv.emit(this.navService.sidebarState);
     }
 
 }
